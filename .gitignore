@@ -1,0 +1,12 @@
+# Build
+build
+doof
+images
+
+# Outputs
+output
+out*
+out
+
+# Vim
+*.swp
