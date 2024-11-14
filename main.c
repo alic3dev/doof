@@ -7,34 +7,35 @@
 
 #define compressionLevel 100
 
-#define IMAGE_DIRECTORY "images"
-
-char* images[1] = {
-  "IMG_4540.HEIC"
-};
-
 unsigned short int charRangeTotal = (
     charRangeMax - charRangeMin
     );
 
-char* resolveImage(char* imageName);
+char* resolveFile(char* fileName);
 char getCharVal(
     unsigned short int* bufferArr,
     size_t length
     );
+void printUsage();
 
-int main() {
-  char* imagePath = resolveImage(images[0]);
+int main(int argc, char* argv[]) {
+  if (argc != 2) {
+    printf("Invalid number of arguments\n");
+    printUsage();
+    return 1;
+  }
+
+  char* filePath = resolveFile(argv[1]);
 
   FILE* inputFile = fopen(
-      imagePath,
+      filePath,
       "rb"
       );
 
   if (inputFile == NULL) {
     printf(
         "Failed to open file [%s]\n", 
-        imagePath
+        filePath
         );
 
     return 1;
@@ -83,21 +84,15 @@ int main() {
   return 0;
 }
 
-char* resolveImage(char* imageName) {
-  static char* imagePath;
-  imagePath = malloc(
-      (
-       sizeof(IMAGE_DIRECTORY) +
-       sizeof(imageName) +
-       1
-      ) * sizeof(char)
+char* resolveFile(char* fileName) {
+  static char* filePath;
+  filePath = malloc(
+      sizeof(fileName) * sizeof(char)
       );
 
-  strcpy(imagePath, IMAGE_DIRECTORY);
-  strcat(imagePath, "/");
-  strcat(imagePath, imageName);
+  strcat(filePath, fileName);
 
-  return imagePath;
+  return filePath;
 }
 
 char getCharVal(
@@ -116,5 +111,9 @@ char getCharVal(
       );
 
   return val;
+}
+
+void printUsage() {
+  printf("USAGE: doof \"filepath\"\n");
 }
 
