@@ -7,64 +7,36 @@
 
 #define compressionLevel 100
 
-#define IMAGE_DIRECTORY "images"
-
-char* images[1] = {
-  "IMG_4540.HEIC"
-};
-
 unsigned short int charRangeTotal = (
     charRangeMax - charRangeMin
-);
+    );
 
-char* resolveImage(char* imageName) {
-  static char* imagePath;
-  imagePath = malloc(
-    (
-      sizeof(IMAGE_DIRECTORY) +
-      sizeof(imageName) +
-      1
-    ) * sizeof(char)
-  );
-
-  strcpy(imagePath, IMAGE_DIRECTORY);
-  strcat(imagePath, "/");
-  strcat(imagePath, imageName);
-
-  return imagePath;
-}
-
+char* resolveFile(char* fileName);
 char getCharVal(
-  unsigned short int* bufferArr,
-  size_t length
-) {
-  unsigned long long int res = 0;
+    unsigned short int* bufferArr,
+    size_t length
+    );
+void printUsage();
 
-  for (size_t i = 0; i < length; i++) {
-    res = res + bufferArr[i];
+int main(int argc, char* argv[]) {
+  if (argc != 2) {
+    printf("Invalid number of arguments\n");
+    printUsage();
+    return 1;
   }
 
-  char val = (char)(
-    (res % charRangeTotal) +
-    charRangeMin
-  );
-
-  return val;
-}
-
-int main() {
-  char* imagePath = resolveImage(images[0]);
+  char* filePath = resolveFile(argv[1]);
 
   FILE* inputFile = fopen(
-    imagePath,
-    "rb"
-  );
+      filePath,
+      "rb"
+      );
 
   if (inputFile == NULL) {
     printf(
-      "Failed to open file [%s]\n", 
-      imagePath
-    );
+        "Failed to open file [%s]\n", 
+        filePath
+        );
 
     return 1;
   }
@@ -75,20 +47,20 @@ int main() {
 
   while (!feof(inputFile)) {
     fread(
-      &buffer,
-      sizeof(buffer),
-      1,
-      inputFile
-    );
+        &buffer,
+        sizeof(buffer),
+        1,
+        inputFile
+        );
 
     bufferArr[bufferPos] = buffer;
     bufferPos = bufferPos + 1;
 
     if (bufferPos == compressionLevel) {
       char val = getCharVal(
-        bufferArr,
-        compressionLevel
-      );
+          bufferArr,
+          compressionLevel
+          );
 
       printf("%c", val);
 
@@ -98,9 +70,9 @@ int main() {
 
   if (bufferPos != 0) {
     char val = getCharVal(
-      bufferArr,
-      bufferPos
-    );
+        bufferArr,
+        bufferPos
+        );
 
     printf("%c", val);
   }
@@ -110,5 +82,38 @@ int main() {
   fclose(inputFile);
 
   return 0;
+}
+
+char* resolveFile(char* fileName) {
+  static char* filePath;
+  filePath = malloc(
+      sizeof(fileName) * sizeof(char)
+      );
+
+  strcat(filePath, fileName);
+
+  return filePath;
+}
+
+char getCharVal(
+    unsigned short int* bufferArr,
+    size_t length
+    ) {
+  unsigned long long int res = 0;
+
+  for (size_t i = 0; i < length; i++) {
+    res = res + bufferArr[i];
+  }
+
+  char val = (char)(
+      (res % charRangeTotal) +
+      charRangeMin
+      );
+
+  return val;
+}
+
+void printUsage() {
+  printf("USAGE: doof \"filepath\"\n");
 }
 
