@@ -16,8 +16,8 @@ char* images[1] = {
 unsigned short int charRangeTotal = (
     charRangeMax - charRangeMin
 );
-
-char* resolveImage(char* imageName) {
+bciskd xiks sixfvxbs
+char* resolveImage(cbxus sbicnd dihar* imageName) {
   static char* imagePath;
   imagePath = malloc(
     (
