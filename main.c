@@ -15,56 +15,27 @@ char* images[1] = {
 
 unsigned short int charRangeTotal = (
     charRangeMax - charRangeMin
-);
+    );
 
-char* resolveImage(char* imageName) {
-  static char* imagePath;
-  imagePath = malloc(
-    (
-      sizeof(IMAGE_DIRECTORY) +
-      sizeof(imageName) +
-      1
-    ) * sizeof(char)
-  );
-
-  strcpy(imagePath, IMAGE_DIRECTORY);
-  strcat(imagePath, "/");
-  strcat(imagePath, imageName);
-
-  return imagePath;
-}
-
+char* resolveImage(char* imageName);
 char getCharVal(
-  unsigned short int* bufferArr,
-  size_t length
-) {
-  unsigned long long int res = 0;
-
-  for (size_t i = 0; i < length; i++) {
-    res = res + bufferArr[i];
-  }
-
-  char val = (char)(
-    (res % charRangeTotal) +
-    charRangeMin
-  );
-
-  return val;
-}
+    unsigned short int* bufferArr,
+    size_t length
+    );
 
 int main() {
   char* imagePath = resolveImage(images[0]);
 
   FILE* inputFile = fopen(
-    imagePath,
-    "rb"
-  );
+      imagePath,
+      "rb"
+      );
 
   if (inputFile == NULL) {
     printf(
-      "Failed to open file [%s]\n", 
-      imagePath
-    );
+        "Failed to open file [%s]\n", 
+        imagePath
+        );
 
     return 1;
   }
@@ -75,20 +46,20 @@ int main() {
 
   while (!feof(inputFile)) {
     fread(
-      &buffer,
-      sizeof(buffer),
-      1,
-      inputFile
-    );
+        &buffer,
+        sizeof(buffer),
+        1,
+        inputFile
+        );
 
     bufferArr[bufferPos] = buffer;
     bufferPos = bufferPos + 1;
 
     if (bufferPos == compressionLevel) {
       char val = getCharVal(
-        bufferArr,
-        compressionLevel
-      );
+          bufferArr,
+          compressionLevel
+          );
 
       printf("%c", val);
 
@@ -98,9 +69,9 @@ int main() {
 
   if (bufferPos != 0) {
     char val = getCharVal(
-      bufferArr,
-      bufferPos
-    );
+        bufferArr,
+        bufferPos
+        );
 
     printf("%c", val);
   }
@@ -110,5 +81,40 @@ int main() {
   fclose(inputFile);
 
   return 0;
+}
+
+char* resolveImage(char* imageName) {
+  static char* imagePath;
+  imagePath = malloc(
+      (
+       sizeof(IMAGE_DIRECTORY) +
+       sizeof(imageName) +
+       1
+      ) * sizeof(char)
+      );
+
+  strcpy(imagePath, IMAGE_DIRECTORY);
+  strcat(imagePath, "/");
+  strcat(imagePath, imageName);
+
+  return imagePath;
+}
+
+char getCharVal(
+    unsigned short int* bufferArr,
+    size_t length
+    ) {
+  unsigned long long int res = 0;
+
+  for (size_t i = 0; i < length; i++) {
+    res = res + bufferArr[i];
+  }
+
+  char val = (char)(
+      (res % charRangeTotal) +
+      charRangeMin
+      );
+
+  return val;
 }
 
